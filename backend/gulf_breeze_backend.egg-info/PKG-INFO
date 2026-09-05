@@ -1,0 +1,42 @@
+Metadata-Version: 2.4
+Name: gulf-breeze-backend
+Version: 0.1.0
+Summary: Backend foundation for Gulf Breeze Air AI platform
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0.0,>=0.115.0
+Requires-Dist: uvicorn[standard]<1.0.0,>=0.30.0
+Requires-Dist: sqlalchemy<3.0.0,>=2.0.0
+Requires-Dist: psycopg[binary]<4.0.0,>=3.2.0
+Requires-Dist: pgvector<1.0.0,>=0.3.2
+Requires-Dist: openai<2.0.0,>=1.51.0
+Requires-Dist: alembic<2.0.0,>=1.13.0
+Requires-Dist: pydantic-settings<3.0.0,>=2.4.0
+Requires-Dist: python-dotenv<2.0.0,>=1.0.1
+
+# Backend
+
+FastAPI backend foundation for the Gulf Breeze Air platform.
+
+## Run locally
+
+From the repository root:
+
+```bash
+cp .env.example .env
+```
+
+Fill `POSTGRES_PASSWORD` in `.env`.
+
+From `backend/`:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Health endpoint:
+
+- `GET /health`

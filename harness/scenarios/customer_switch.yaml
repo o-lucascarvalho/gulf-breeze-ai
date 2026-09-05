@@ -1,0 +1,69 @@
+name: customer_switch
+mode: fake
+tools:
+  - name: search_customers
+    responses:
+      - matches:
+          - customer_id: cus_tamara
+            first_name: Tamara
+            last_name: Cruz
+        ambiguous: false
+        count: 1
+      - matches:
+          - customer_id: cus_robert
+            first_name: Robert
+            last_name: Smith
+        ambiguous: false
+        count: 1
+  - name: get_customer_balance
+    responses:
+      - customer_id: cus_tamara
+        balance: 9680.04
+        open_count: 14
+        currency: USD
+      - customer_id: cus_robert
+        balance: 55.0
+        open_count: 1
+        currency: USD
+turns:
+  - user: How much does Tamara Cruz owe?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: get_customer_balance
+            arguments:
+              customer_id: cus_tamara
+      - message: Tamara Cruz currently owes $9,680.04.
+    assertions:
+      - type: tool_sequence
+        value:
+          - search_customers
+          - get_customer_balance
+  - user: Now check Robert Smith.
+    script:
+      - tool_calls:
+          - call_id: "3"
+            name: search_customers
+            arguments:
+              name: Robert Smith
+      - tool_calls:
+          - call_id: "4"
+            name: get_customer_balance
+            arguments:
+              customer_id: cus_robert
+      - message: Robert Smith currently owes $55.00.
+    assertions:
+      - type: session_reused
+        value: true
+      - type: field_equals
+        field: active_customer_id
+        value: cus_robert
+      - type: tool_sequence
+        value:
+          - search_customers
+          - get_customer_balance

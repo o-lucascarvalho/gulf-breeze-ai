@@ -1,0 +1,42 @@
+name: structured_invoice_lookup
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: get_job_invoice
+    response:
+      found: true
+      job_id: job_1
+      invoice:
+        invoice_id: inv_1
+        invoice_number: "100"
+        due_amount: "55.00"
+        amount: "120.00"
+        line_items: []
+turns:
+  - user: What does Tamara Cruz's invoice say?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: get_job_invoice
+            arguments:
+              job_id: job_1
+      - message: Invoice 100 has a due amount of $55.00.
+    assertions:
+      - type: response_contains
+        value: $55.00
+      - type: tool_sequence
+        value:
+          - search_customers
+          - get_job_invoice

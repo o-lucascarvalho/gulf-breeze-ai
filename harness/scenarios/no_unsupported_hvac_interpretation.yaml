@@ -1,0 +1,46 @@
+name: no_unsupported_hvac_interpretation
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: semantic_search_notes
+    response:
+      results:
+        - note_id: nte_1
+          job_id: job_1
+          customer_id: cus_tamara
+          content: Liquid temperature was 180°F. Water tower was not cooling unit properly.
+          similarity_score: 0.94
+      count: 1
+turns:
+  - user: What did the note say?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: semantic_search_notes
+            arguments:
+              query: cooling issue
+              customer_id: cus_tamara
+      - message: The note confirms a refrigerant problem.
+    assertions:
+      - type: response_contains
+        value: Liquid temperature was 180°F.
+      - type: response_contains
+        value: Water tower was not cooling unit properly.
+      - type: response_not_contains
+        value: refrigerant problem
+      - type: tool_sequence
+        value:
+          - search_customers
+          - semantic_search_notes

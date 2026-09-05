@@ -1,0 +1,44 @@
+name: tamara_refrigerant_leak_not_confirmed
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: semantic_search_notes
+    response:
+      results:
+        - note_id: nte_1
+          job_id: job_1
+          customer_id: cus_tamara
+          content: System may be low on refrigerant.
+          similarity_score: 0.91
+      count: 1
+turns:
+  - user: Has Tamara Cruz had refrigerant leaks before?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: semantic_search_notes
+            arguments:
+              query: refrigerant leak
+              customer_id: cus_tamara
+      - message: Yes, the customer had a confirmed refrigerant leak.
+    assertions:
+      - type: response_contains
+        value: possible issue
+      - type: response_not_contains
+        value: confirmed refrigerant leak
+      - type: tool_sequence
+        value:
+          - search_customers
+          - semantic_search_notes

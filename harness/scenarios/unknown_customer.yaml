@@ -1,0 +1,33 @@
+name: unknown_customer
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches: []
+      ambiguous: false
+      count: 0
+  - name: request_handoff
+    response:
+      needs_handoff: true
+      handoff_reason: Unknown customer
+turns:
+  - user: How much does Nadia Park owe?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Nadia Park
+      - tool_calls:
+          - call_id: "2"
+            name: request_handoff
+            arguments:
+              reason: Unknown customer
+      - message: I could not locate a matching customer.
+    assertions:
+      - type: needs_handoff
+        value: true
+      - type: tool_sequence
+        value:
+          - search_customers
+          - request_handoff

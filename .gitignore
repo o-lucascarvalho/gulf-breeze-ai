@@ -1,0 +1,25 @@
+# Local environment files
+.env
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Coverage
+.coverage
+htmlcov/
+
+# OS/editor
+.DS_Store
+.vscode/*.log
+
+# data files
+data/
+

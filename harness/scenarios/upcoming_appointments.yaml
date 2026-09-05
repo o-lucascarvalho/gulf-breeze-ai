@@ -1,0 +1,39 @@
+name: upcoming_appointments
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: get_upcoming_appointments
+    response:
+      customer_id: cus_tamara
+      appointments:
+        - status: scheduled
+          summary: Pending schedule tomorrow morning.
+      count: 1
+turns:
+  - user: Does Tamara Cruz have any upcoming appointments?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: get_upcoming_appointments
+            arguments:
+              customer_id: cus_tamara
+      - message: Tamara has a pending schedule tomorrow morning.
+    assertions:
+      - type: response_contains
+        value: pending schedule
+      - type: tool_sequence
+        value:
+          - search_customers
+          - get_upcoming_appointments

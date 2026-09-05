@@ -1,0 +1,39 @@
+name: ambiguous_customer
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_alex_1
+          first_name: Alex
+          last_name: Jones
+        - customer_id: cus_alex_2
+          first_name: Alex
+          last_name: Smith
+      ambiguous: true
+      count: 2
+  - name: request_handoff
+    response:
+      needs_handoff: true
+      handoff_reason: Ambiguous customer match
+turns:
+  - user: How much does Alex owe?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Alex
+      - tool_calls:
+          - call_id: "2"
+            name: request_handoff
+            arguments:
+              reason: Ambiguous customer match
+      - message: I found multiple possible matches and need office clarification.
+    assertions:
+      - type: needs_handoff
+        value: true
+      - type: tool_sequence
+        value:
+          - search_customers
+          - request_handoff

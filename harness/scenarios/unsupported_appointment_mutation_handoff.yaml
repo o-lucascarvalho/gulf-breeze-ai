@@ -1,0 +1,38 @@
+name: unsupported_appointment_mutation_handoff
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: request_handoff
+    response:
+      needs_handoff: true
+      handoff_reason: Unsupported appointment mutation request
+turns:
+  - user: Move Tamara Cruz's appointment to Friday.
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: request_handoff
+            arguments:
+              reason: Unsupported appointment mutation request
+      - message: ""
+    assertions:
+      - type: needs_handoff
+        value: true
+      - type: status_equals
+        value: handoff
+      - type: tool_sequence
+        value:
+          - search_customers
+          - request_handoff

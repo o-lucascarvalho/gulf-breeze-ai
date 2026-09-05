@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gulf-breeze-backend"
+version = "0.1.0"
+description = "Backend foundation for Gulf Breeze Air AI platform"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0,<1.0.0",
+  "uvicorn[standard]>=0.30.0,<1.0.0",
+  "sqlalchemy>=2.0.0,<3.0.0",
+  "psycopg[binary]>=3.2.0,<4.0.0",
+  "pgvector>=0.3.2,<1.0.0",
+  "openai>=1.51.0,<2.0.0",
+  "alembic>=1.13.0,<2.0.0",
+  "pydantic-settings>=2.4.0,<3.0.0",
+  "python-dotenv>=1.0.1,<2.0.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]

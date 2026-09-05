@@ -1,0 +1,62 @@
+name: note_date_follow_up
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: semantic_search_notes
+    response:
+      results:
+        - note_id: nte_1
+          job_id: job_1
+          customer_id: cus_tamara
+          content: On 2026-08-12, technician replaced capacitor and noted cooling issues.
+          similarity_score: 0.93
+      count: 1
+  - name: get_note
+    response:
+      note_id: nte_1
+      job_id: job_1
+      customer_id: cus_tamara
+      content: On 2026-08-12, technician replaced capacitor and noted cooling issues.
+turns:
+  - user: What do the notes say about Tamara Cruz?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: semantic_search_notes
+            arguments:
+              query: notes
+              customer_id: cus_tamara
+      - message: 1. On 2026-08-12, technician replaced capacitor and noted cooling issues.
+    assertions:
+      - type: tool_sequence
+        value:
+          - search_customers
+          - semantic_search_notes
+  - user: What was the date on note 1?
+    script:
+      - tool_calls:
+          - call_id: "3"
+            name: semantic_search_notes
+            arguments:
+              query: date on note 1
+      - message: Note 1 was dated 2026-08-12.
+    assertions:
+      - type: session_reused
+        value: true
+      - type: tool_sequence
+        value:
+          - get_note
+      - type: response_contains
+        value: 2026-08-12

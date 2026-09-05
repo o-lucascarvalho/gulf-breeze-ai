@@ -1,0 +1,44 @@
+name: sara_beck_confirmed_refrigerant_leak
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_sara
+          first_name: Sara
+          last_name: Beck
+      ambiguous: false
+      count: 1
+  - name: semantic_search_notes
+    response:
+      results:
+        - note_id: nte_1
+          job_id: job_9
+          customer_id: cus_sara
+          content: Detected refrigerant leak at evaporator coil.
+          similarity_score: 0.96
+      count: 1
+turns:
+  - user: Did Sara Beck have a refrigerant leak?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Sara Beck
+      - tool_calls:
+          - call_id: "2"
+            name: semantic_search_notes
+            arguments:
+              query: refrigerant leak
+              customer_id: cus_sara
+      - message: Yes. A technician documented a refrigerant leak at the evaporator coil.
+    assertions:
+      - type: response_contains
+        value: refrigerant leak
+      - type: response_contains
+        value: evaporator coil
+      - type: tool_sequence
+        value:
+          - search_customers
+          - semantic_search_notes

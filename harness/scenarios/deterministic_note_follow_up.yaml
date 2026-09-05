@@ -1,0 +1,68 @@
+name: deterministic_note_follow_up
+mode: fake
+tools:
+  - name: search_customers
+    response:
+      matches:
+        - customer_id: cus_tamara
+          first_name: Tamara
+          last_name: Cruz
+      ambiguous: false
+      count: 1
+  - name: semantic_search_notes
+    response:
+      results:
+        - note_id: nte_a
+          job_id: job_a
+          customer_id: cus_tamara
+          content: System may be low on refrigerant.
+          similarity_score: 0.92
+        - note_id: nte_b
+          job_id: job_b
+          customer_id: cus_tamara
+          content: Need to evacuate refrigerant before replacing reversing valve.
+          similarity_score: 0.88
+      count: 2
+  - name: get_note
+    response:
+      note_id: nte_a
+      job_id: job_a
+      customer_id: cus_tamara
+      content: System may be low on refrigerant.
+turns:
+  - user: Has Tamara Cruz had refrigerant leaks before?
+    script:
+      - tool_calls:
+          - call_id: "1"
+            name: search_customers
+            arguments:
+              name: Tamara Cruz
+      - tool_calls:
+          - call_id: "2"
+            name: semantic_search_notes
+            arguments:
+              query: refrigerant leak
+              customer_id: cus_tamara
+      - message: 1. System may be low on refrigerant.
+        
+    assertions:
+      - type: tool_sequence
+        value:
+          - search_customers
+          - semantic_search_notes
+  - user: Tell me more about note 1.
+    script:
+      - tool_calls:
+          - call_id: "3"
+            name: semantic_search_notes
+            arguments:
+              query: details about note 1
+      - message: Note 1 says the system may be low on refrigerant.
+    assertions:
+      - type: session_reused
+        value: true
+      - type: tool_sequence
+        value:
+          - get_note
+      - type: response_contains
+        value: Note 1 says the system may be low on refrigerant.

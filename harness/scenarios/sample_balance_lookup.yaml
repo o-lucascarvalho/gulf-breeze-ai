@@ -1,0 +1,75 @@
+{
+  "name": "sample_balance_lookup",
+  "mode": "fake",
+  "tools": [
+    {
+      "name": "search_customers",
+      "response": {
+        "matches": [
+          {
+            "customer_id": "cus_tamara",
+            "first_name": "Tamara",
+            "last_name": "Cruz"
+          }
+        ],
+        "ambiguous": false,
+        "count": 1
+      }
+    },
+    {
+      "name": "get_customer_balance",
+      "response": {
+        "customer_id": "cus_tamara",
+        "balance": 9680.04,
+        "open_count": 14,
+        "currency": "USD"
+      }
+    }
+  ],
+  "turns": [
+    {
+      "user": "How much does Tamara Cruz owe?",
+      "script": [
+        {
+          "tool_calls": [
+            {
+              "call_id": "1",
+              "name": "search_customers",
+              "arguments": {
+                "name": "Tamara Cruz"
+              }
+            }
+          ]
+        },
+        {
+          "tool_calls": [
+            {
+              "call_id": "2",
+              "name": "get_customer_balance",
+              "arguments": {
+                "customer_id": "cus_tamara"
+              }
+            }
+          ]
+        },
+        {
+          "message": "Tamara Cruz currently owes $9,680.04."
+        }
+      ],
+      "assertions": [
+        {
+          "type": "response_contains",
+          "value": "owes $9,680.04"
+        },
+        {
+          "type": "status_equals",
+          "value": "active"
+        },
+        {
+          "type": "tool_sequence",
+          "value": ["search_customers", "get_customer_balance"]
+        }
+      ]
+    }
+  ]
+}
