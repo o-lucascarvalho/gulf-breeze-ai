@@ -34,6 +34,8 @@ Explicit Tools
   ├── Weather forecast
   └── Human handoff
   ↓
+Application Services / Repositories
+  ↓
 PostgreSQL + Agent Audit Trail
 ```
 
