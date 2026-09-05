@@ -18,6 +18,7 @@ The original Housecall Pro-style dataset remains immutable. Operational changes 
 
 ## Architecture
 
+```text
 User
   ↓
 Web Chat / Browser Voice / PSTN
@@ -27,13 +28,14 @@ Agent API
 OpenAI Responses API Agent
   ↓
 Explicit Tools
-  ├─ Structured PostgreSQL retrieval
-  ├─ pgvector semantic retrieval
-  ├─ Appointment scheduling overlay
-  ├─ Weather forecast
-  └─ Human handoff
+  ├── Structured PostgreSQL retrieval
+  ├── pgvector semantic retrieval
+  ├── Appointment scheduling overlay
+  ├── Weather forecast
+  └── Human handoff
   ↓
 PostgreSQL + Agent Audit Trail
+```
 
 
 ## Repository Structure
