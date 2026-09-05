@@ -24,7 +24,7 @@ class Settings(BaseSettings):
 
     openai_api_key: str = Field(default="", alias="OPENAI_API_KEY")
     openai_embedding_model: str = Field(default="text-embedding-3-small", alias="OPENAI_EMBEDDING_MODEL")
-    openai_agent_model: str = Field(default="gpt-4o-mini", alias="OPENAI_AGENT_MODEL")
+    openai_agent_model: str = Field(default="gpt-5.4-mini", alias="OPENAI_AGENT_MODEL")
     embedding_dimension: int = Field(default=1536, alias="EMBEDDING_DIMENSION")
     embedding_batch_size: int = Field(default=100, alias="EMBEDDING_BATCH_SIZE")
     embedding_max_retries: int = Field(default=3, alias="EMBEDDING_MAX_RETRIES")
